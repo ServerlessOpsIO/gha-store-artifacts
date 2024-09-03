@@ -1,0 +1,59 @@
+name: 'store-artifacts'
+description: 'Store workspace artifacts'
+
+inputs:
+  use_aws_sam:
+    description: If AWS SAM is used by the project; if true, the `sam package` command will run to store template and function artifacts in S3
+    required: false
+  aws_account_region:
+    description: AWS region to deploy to
+    required: false
+    default: us-east-2
+  artifact_name_override:
+    description: Override name of artifact
+    required: false
+    default: ''
+  artifact_retention_days:
+    description: Number of days to retain artifacts
+    required: false
+    default: "14"
+
+runs:
+  using: composite
+  steps:
+    - name: Set artifact name
+      id: set-artifact-name
+      uses: ServerlessOpsIO/gha-artifact-name@v1
+      with:
+        artifact_name_override: ${{ inputs.artifact_name_override }}
+
+    - name: Upload SAM artifact
+      id: upload-sam
+      if: ${{ inputs.use_aws_sam }}
+      shell: bash
+      run: |
+        sam package \
+          --resolve-s3 \
+          --s3-prefix ${{ env.GITHUB_REPOSITORY_OWNER_PART_SLUG_URL }}/${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}/${{ env.GITHUB_REF_SLUG_URL }} \
+          --region ${{ inputs.aws_account_region }} \
+          --output-template-file packaged-template.yaml
+
+    - name: 'Upload pipeline artifact'
+      id: upload-artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.set-artifact-name.outputs.artifact-name }}
+        path: |
+          **/*
+          !.aws-sam/build
+          !**/.terraform/providers
+          !node_modules
+          !.git
+        if-no-files-found: error
+        retention-days: ${{ inputs.artifact_retention_days }}
+
+outputs:
+  artifact_name:
+    description: Name of artifact stored
+    value: ${{ steps.set-artifact-name.outputs.artifact-name }}
+

@@ -1,0 +1,59 @@
+name: Main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Setup job workspace
+        uses: ServerlessOpsIO/gha-setup-workspace@v1
+
+      - name: Schema Validation
+        id: schema-validation
+        uses: dsanders11/json-schema-validate-action@v1.2.0
+        with:
+          files: 'action.yaml'
+          schema: https://json.schemastore.org/github-action.json
+
+  merge:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - name: Setup job workspace
+        uses: ServerlessOpsIO/gha-setup-workspace@v1
+        with:
+          checkout_fetch_depth: 0
+
+      - name: Merge branch
+        id: merge-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Configuring git"
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
+
+          echo "Checking out branch"
+          git fetch origin v1
+          git checkout v1
+          git reset --hard v1
+
+          echo "Merging branch"
+          git merge --no-ff $GITHUB_REF
+
+          echo "Pushing branch"
+          git push origin v1
