@@ -21,7 +21,7 @@ The `gha-store-artifacts` action performs the following tasks:
 
 ## Outputs
 
-- `artifact_name`: The name of the artifact stored.
+- `artifact-name`: The name of the artifact stored.
 
 ## Usage
 
