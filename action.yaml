@@ -52,7 +52,7 @@ runs:
         retention-days: ${{ inputs.artifact_retention_days }}
 
 outputs:
-  artifact_name:
+  artifact-name:
     description: Name of artifact stored
     value: ${{ steps.set-artifact-name.outputs.artifact-name }}
 
