@@ -12,7 +12,6 @@ inputs:
   artifact_name_override:
     description: Override name of artifact
     required: false
-    default: ''
   artifact_retention_days:
     description: Number of days to retain artifacts
     required: false
