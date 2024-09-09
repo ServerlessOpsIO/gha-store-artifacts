@@ -47,7 +47,7 @@ jobs:
         uses: ServerlessOpsIO/gha-store-artifacts@v1
         with:
           use_aws_sam: true
-          artifact_name_override: '${{ steps.store-artifacts.outputs.artifact_name }}'
+          artifact_name_override: '${{ steps.store-artifacts.outputs.artifact-name }}'
 ```
 
 ### Artifact naming
