@@ -21,10 +21,14 @@ See below for inputs, outputs, and examples.
 - `artifact_retention_days` (optional): Number of days to retain artifacts..
 - `use_aws_sam` (optional): Boolean to determine if SAM artifact should be uploaded.
 - `aws_account_region` (optional): AWS region to use for SAM packaging.
+- `sam_s3_bucket` (optional): S3 bucket for SAM deployment.
+- `sam_s3_prefix` (optional): S3 prefix for SAM deployment.
 
 ### Outputs
 
 - `artifact-name`: The name of the artifact stored.
+- `sam-artifact-bucket`: The S3 bucket where the SAM artifact was uploaded.
+- `sam-artifact-bucket-prefix`: The S3 prefix where the SAM artifact was uploaded.
 
 ### Examples
 To use this action see the examples below:
@@ -120,6 +124,10 @@ jobs:
           artifact_name_override: ${{ needs.build.outputs.artifact-name }}
 
 ```
+
+#### S3 Bucket
+
+The default value for `sam_s3_bucket` comes from [ServerlessOpsIO/aws-gha-integration](https://github.com/ServerlessOpsIO/aws-gha-integration). Both the `sam_s3_bucket` and `sam_s3_prefix` should not need to be configured but are avavailbel for unique circumstances.
 
 ## Contributing
 
