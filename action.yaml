@@ -16,6 +16,13 @@ inputs:
     description: Number of days to retain artifacts
     required: false
     default: "14"
+  sam_s3_bucket:
+    description: S3 bucket for SAM deployment
+    required: false
+    default: aws-sam-cli-sourcebucket-346402060170-us-east-1
+  sam_s3_prefix:
+    description: S3 prefix for SAM deployment
+    required: false
 
 runs:
   using: composite
@@ -26,14 +33,47 @@ runs:
       with:
         artifact_name_override: ${{ inputs.artifact_name_override }}
 
+    - name: Set SAM S3 Bucket
+      id: set-sam-s3-bucket
+      env:
+        SAM_S3_BUCKET: ${{ inputs.sam_s3_bucket }}
+        AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
+        AWS_REGION: ${{ inputs.aws_region || env.AWS_REGION }}
+      shell: bash
+      run: |
+        if [ -z "${SAM_S3_BUCKET}" ]; then
+          s3_bucket="aws-sam-cli-sourcebucket-${AWS_ACCOUNT_ID}-${AWS_REGION}";
+        else
+          s3_bucket="${SAM_S3_BUCKET}";
+        fi;
+        echo "SAM S3 bucket resolved to: $s3_bucket"
+        echo "s3-bucket=$s3_bucket" >> $GITHUB_OUTPUT
+
+    - name: Set SAM S3 prefix
+      id: set-sam-s3-prefix
+      env:
+        SAM_S3_PREFIX: ${{ inputs.sam_s3_prefix }}
+      shell: bash
+      run: |
+        if [ -z "${SAM_S3_PREFIX}" ]; then
+          s3_prefix="${{ env.GITHUB_REPOSITORY_OWNER_PART_SLUG_URL }}/${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}/${{ env.GITHUB_REF_SLUG_URL }}";
+        else
+          s3_prefix="${SAM_S3_PREFIX}";
+        fi;
+        echo "SAM S3 prefix resolved to: $s3_prefix"
+        echo "s3-prefix=$s3_prefix" >> $GITHUB_OUTPUT
+
     - name: Upload SAM artifact
       id: upload-sam
       if: ${{ inputs.use_aws_sam }}
+      env:
+        S3_BUCKET: ${{ steps.set-sam-s3-bucket.outputs.s3-bucket }}
+        S3_PREFIX: ${{ steps.set-sam-s3-prefix.outputs.s3-prefix }}
       shell: bash
       run: |
         sam package \
-          --resolve-s3 \
-          --s3-prefix ${{ env.GITHUB_REPOSITORY_OWNER_PART_SLUG_URL }}/${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}/${{ env.GITHUB_REF_SLUG_URL }} \
+          --s3-bucket ${S3_BUCKET} \
+          --s3-prefix ${S3_PREFIX} \
           --region ${{ inputs.aws_account_region }} \
           --output-template-file packaged-template.yaml
 
@@ -55,4 +95,10 @@ outputs:
   artifact-name:
     description: Name of artifact stored
     value: ${{ steps.set-artifact-name.outputs.artifact-name }}
+  sam-artifact-bucket:
+    description: S3 bucket where SAM artifact was uploaded
+    value: ${{ steps.set-sam-s3-bucket.outputs.s3-bucket }}
+  sam-artifact-bucket-prefix:
+    description: S3 prefix where SAM artifact was uploaded
+    value: ${{ steps.set-sam-s3-prefix.outputs.s3-prefix }}
 
