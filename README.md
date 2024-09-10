@@ -12,21 +12,24 @@ The `gha-store-artifacts` action performs the following tasks:
 3. Sets the artifact name based on the provided override or generates a default name.
 4. Uploads the job working directory as an artifact to GHA
 
-## Inputs
+## Usage
+See below for inputs, outputs, and examples.
+
+### Inputs
 
 - `artifact_name_override` (optional): Override the name of the artifact.
 - `artifact_retention_days` (optional): Number of days to retain artifacts..
 - `use_aws_sam` (optional): Boolean to determine if SAM artifact should be uploaded.
 - `aws_account_region` (optional): AWS region to use for SAM packaging.
 
-## Outputs
+### Outputs
 
 - `artifact-name`: The name of the artifact stored.
 
-## Usage
+### Examples
+To use this action see the examples below:
 
-To use this action, add the following step to your workflow:
-
+#### w/o AWS SAM
 ```yaml
 name: CI
 
@@ -45,9 +48,45 @@ jobs:
 
       - name: Store Artifacts
         uses: ServerlessOpsIO/gha-store-artifacts@v1
+```
+
+#### w/ AWS SAM
+```yaml
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # Required for AWS credentials
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Setup job workspace
+        id: setup-workspace
+        uses: ServerlessOpsIO/gha-setup-workspace@v1
+
+
+      # Do job work here
+
+
+      - name: Assume AWS Credentials
+        uses: ServerlessOpsIO/gha-assume-aws-credentials@v1
+        with:
+          build_aws_account_id: ${{ secrets.BUILD_AWS_ACCOUNT_ID }}
+          deploy_aws_account_id: ${{ secrets.DEPLOY_AWS_ACCOUNT_ID }}
+          aws_account_region: 'us-east-1'
+          gha_build_role_name: ${{ secrets.GHA_BUILD_ROLE_NAME }}
+          gha_deploy_role_name: ${{ secrets.GHA_DEPLOY_ROLE_NAME }}
+
+      - name: Store Artifacts
+        uses: ServerlessOpsIO/gha-store-artifacts@v1
         with:
           use_aws_sam: true
-          artifact_name_override: '${{ steps.store-artifacts.outputs.artifact-name }}'
+
 ```
 
 ### Artifact naming
