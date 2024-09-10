@@ -95,10 +95,6 @@ Both [ServerlessOpsIO/gha-setup-workspace](https://github.com/ServerlessOpsIO/gh
 See the example below:
 
 ```yaml
-outputs:
-  artifact_name:
-    description: The name of the artifact downloaded.
-
 jobs:
   build:
     runs-on: ubuntu-latest
