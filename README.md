@@ -4,7 +4,7 @@ Store job artifacts in GitHub.
 
 This GitHub Action allows you to store artifacts generated during your workflow. It supports setting custom artifact names and retaining artifacts for a specified number of days.
 
-For more information on what happens when `use_aws_sam` is true see [ServerlessOpsIO/gha-package-aws-sam]([gha-deploy-aws-sam](https://github.com/ServerlessOpsIO/gha-deploy-aws-sam/actions))
+For more information on what happens when `use_aws_sam` is true see [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-deploy-aws-sam/actions).
 
 _*NOTE: This workflow is opinionated and meets the needs of its author. It is provided publicly as a reference for others to use and modify as needed.*_
 
