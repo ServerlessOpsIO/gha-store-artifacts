@@ -8,7 +8,7 @@ inputs:
   aws_account_region:
     description: AWS region to deploy to
     required: false
-    default: us-east-2
+    default: us-east-1
   artifact_name_override:
     description: Override name of artifact
     required: false
@@ -16,6 +16,10 @@ inputs:
     description: Number of days to retain artifacts
     required: false
     default: "14"
+  packaged_template_file:
+    description: Path to packaged SAM template file
+    required: false
+    default: packaged-template.yaml
   sam_s3_bucket:
     description: S3 bucket for SAM deployment
     required: false
@@ -33,49 +37,15 @@ runs:
       with:
         artifact_name_override: ${{ inputs.artifact_name_override }}
 
-    - name: Set SAM S3 Bucket
-      id: set-sam-s3-bucket
-      env:
-        SAM_S3_BUCKET: ${{ inputs.sam_s3_bucket }}
-        AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
-        AWS_REGION: ${{ inputs.aws_region || env.AWS_REGION }}
-      shell: bash
-      run: |
-        if [ -z "${SAM_S3_BUCKET}" ]; then
-          s3_bucket="aws-sam-cli-sourcebucket-${AWS_ACCOUNT_ID}-${AWS_REGION}";
-        else
-          s3_bucket="${SAM_S3_BUCKET}";
-        fi;
-        echo "SAM S3 bucket resolved to: $s3_bucket"
-        echo "s3-bucket=$s3_bucket" >> $GITHUB_OUTPUT
-
-    - name: Set SAM S3 prefix
-      id: set-sam-s3-prefix
-      env:
-        SAM_S3_PREFIX: ${{ inputs.sam_s3_prefix }}
-      shell: bash
-      run: |
-        if [ -z "${SAM_S3_PREFIX}" ]; then
-          s3_prefix="${{ env.GITHUB_REPOSITORY_OWNER_PART_SLUG_URL }}/${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}/${{ env.GITHUB_REF_SLUG_URL }}";
-        else
-          s3_prefix="${SAM_S3_PREFIX}";
-        fi;
-        echo "SAM S3 prefix resolved to: $s3_prefix"
-        echo "s3-prefix=$s3_prefix" >> $GITHUB_OUTPUT
-
-    - name: Upload SAM artifact
-      id: upload-sam
+    - name: Package & Upload SAM artifact
+      id: package-sam
       if: ${{ inputs.use_aws_sam }}
-      env:
-        S3_BUCKET: ${{ steps.set-sam-s3-bucket.outputs.s3-bucket }}
-        S3_PREFIX: ${{ steps.set-sam-s3-prefix.outputs.s3-prefix }}
-      shell: bash
-      run: |
-        sam package \
-          --s3-bucket ${S3_BUCKET} \
-          --s3-prefix ${S3_PREFIX} \
-          --region ${{ inputs.aws_account_region }} \
-          --output-template-file packaged-template.yaml
+      uses: ServerlessOpsIO/gha-package-aws-sam@v1
+      with:
+        aws_account_region: ${{ inputs.aws_account_region }}
+        packaged_template_file: packaged-template.yaml
+        sam_s3_bucket: ${{ inputs.sam_s3_bucket }}
+        sam_s3_prefix: ${{ inputs.sam_s3_prefix }}
 
     - name: 'Upload pipeline artifact'
       id: upload-artifact
@@ -95,6 +65,9 @@ outputs:
   artifact-name:
     description: Name of artifact stored
     value: ${{ steps.set-artifact-name.outputs.artifact-name }}
+  packaged-template:
+    description: Path to packaged SAM template file
+    value: ${{ steps.package-sam.outputs.packaged-template }}
   sam-artifact-bucket:
     description: S3 bucket where SAM artifact was uploaded
     value: ${{ steps.set-sam-s3-bucket.outputs.s3-bucket }}
