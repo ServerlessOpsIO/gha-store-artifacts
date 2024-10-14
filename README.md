@@ -6,7 +6,7 @@ This GitHub Action allows you to store artifacts generated during your workflow.
 
 For more information on what happens when `use_aws_sam` is true see [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-deploy-aws-sam/actions).
 
-_*NOTE: This workflow is opinionated and meets the needs of its author. It is provided publicly as a reference for others to use and modify as needed.*_
+_**NOTE: This workflow is opinionated and meets the needs of its author. It is provided publicly as a reference for others to use and modify as needed.**_
 
 The `gha-store-artifacts` action performs the following tasks:
 1. Checks if the GitHub environment variable `GITHUB_REPOSITORY_OWNER_PART_SLUG_URL` is set and fails if not.
