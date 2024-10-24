@@ -23,7 +23,7 @@ inputs:
   sam_s3_bucket:
     description: S3 bucket for SAM deployment
     required: false
-    default: aws-sam-cli-sourcebucket-346402060170-us-east-1
+    default: aws-sam-cli-sourcebucket-225989329251-us-east-1
   sam_s3_prefix:
     description: S3 prefix for SAM deployment
     required: false
