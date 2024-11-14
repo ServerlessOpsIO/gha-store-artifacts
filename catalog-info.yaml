@@ -1,0 +1,13 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: gha-store-artifacts
+  description: GitHub Actions composite action to store artifacts
+  annotations:
+    github.com/project-slug: ServerlessOpsIO/gha-store-artifacts
+spec:
+  type: gha-action
+  lifecycle: production
+  owner: group:developers
+  system: system:github-actions
