@@ -32,6 +32,9 @@ jobs:
       id-token: write
       contents: write
 
+    env:
+      MERGE_BRANCH: v2
+
     steps:
       - name: Setup job workspace
         uses: ServerlessOpsIO/gha-setup-workspace@v1
@@ -48,12 +51,12 @@ jobs:
           git config user.email "<>"
 
           echo "Checking out branch"
-          git fetch origin v1
-          git checkout v1
-          git reset --hard v1
+          git fetch origin $MERGE_BRANCH
+          git checkout $MERGE_BRANCH
+          git reset --hard $MERGE_BRANCH
 
           echo "Merging branch"
           git merge --no-ff $GITHUB_REF
 
           echo "Pushing branch"
-          git push origin v1
+          git push origin $MERGE_BRANCH
