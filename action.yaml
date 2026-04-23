@@ -30,7 +30,7 @@ runs:
   steps:
     - name: Package & Upload SAM artifact
       id: package-sam
-      if: ${{ inputs.use_aws_sam }}
+      if: ${{ inputs.use_aws_sam == 'true' }}
       uses: ServerlessOpsIO/gha-package-aws-sam@v1
       with:
         aws_account_region: ${{ inputs.aws_account_region }}

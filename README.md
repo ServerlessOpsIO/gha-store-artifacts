@@ -4,14 +4,13 @@ Store job artifacts in GitHub.
 
 This GitHub Action allows you to store artifacts generated during your workflow. It additionally supports packaging and storing AWS SAM artifacts for serverless applications.
 
-For more information on what happens when `use_aws_sam` is true see [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-deploy-aws-sam/actions).
+For more information on what happens when `use_aws_sam` is true see [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-deploy-aws-sam).
 
 _**NOTE: This workflow is opinionated and meets the needs of its author. It is provided publicly as a reference for others to use and modify as needed.**_
 
 The `gha-store-artifacts` action performs the following tasks:
-1. Checks if the GitHub environment variable `GITHUB_REPOSITORY_OWNER_PART_SLUG_URL` is set and fails if not.
 1. Optionally uploads a SAM artifact if specified.
-1. Uploads the job working directory as an artifact to GHA
+1. Uploads the job working directory as an artifact to GHA.
 
 ## Usage
 See below for inputs, outputs, and examples.
