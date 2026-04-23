@@ -9,9 +9,6 @@ inputs:
     description: AWS region to deploy to
     required: false
     default: us-east-1
-  artifact_name_override:
-    description: Override name of artifact
-    required: false
   artifact_retention_days:
     description: Number of days to retain artifacts
     required: false
@@ -31,15 +28,9 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set artifact name
-      id: set-artifact-name
-      uses: ServerlessOpsIO/gha-artifact-name@v1
-      with:
-        artifact_name_override: ${{ inputs.artifact_name_override }}
-
     - name: Package & Upload SAM artifact
       id: package-sam
-      if: ${{ inputs.use_aws_sam }}
+      if: ${{ inputs.use_aws_sam == 'true' }}
       uses: ServerlessOpsIO/gha-package-aws-sam@v1
       with:
         aws_account_region: ${{ inputs.aws_account_region }}
@@ -51,7 +42,6 @@ runs:
       id: upload-artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.set-artifact-name.outputs.artifact-name }}
         path: |
           **/*
           !.aws-sam/build
@@ -61,9 +51,6 @@ runs:
         retention-days: ${{ inputs.artifact_retention_days }}
 
 outputs:
-  artifact-name:
-    description: Name of artifact stored
-    value: ${{ steps.set-artifact-name.outputs.artifact-name }}
   packaged-template:
     description: Path to packaged SAM template file
     value: ${{ steps.package-sam.outputs.packaged-template }}
