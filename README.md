@@ -2,7 +2,7 @@
 
 Store job artifacts in GitHub.
 
-This GitHub Action allows you to store artifacts generated during your workflow. It supports setting custom artifact names and retaining artifacts for a specified number of days.
+This GitHub Action allows you to store artifacts generated during your workflow. It additionally supports packaging and storing AWS SAM artifacts for serverless applications.
 
 For more information on what happens when `use_aws_sam` is true see [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-deploy-aws-sam/actions).
 
@@ -10,16 +10,14 @@ _**NOTE: This workflow is opinionated and meets the needs of its author. It is p
 
 The `gha-store-artifacts` action performs the following tasks:
 1. Checks if the GitHub environment variable `GITHUB_REPOSITORY_OWNER_PART_SLUG_URL` is set and fails if not.
-2. Optionally uploads a SAM artifact if specified.
-3. Sets the artifact name based on the provided override or generates a default name.
-4. Uploads the job working directory as an artifact to GHA
+1. Optionally uploads a SAM artifact if specified.
+1. Uploads the job working directory as an artifact to GHA
 
 ## Usage
 See below for inputs, outputs, and examples.
 
 ### Inputs
 
-- `artifact_name_override` (optional): Override the name of the artifact.
 - `artifact_retention_days` (optional): Number of days to retain artifacts..
 - `use_aws_sam` (optional): Boolean to determine if SAM artifact should be uploaded.
 - `aws_account_region` (optional): AWS region to use for SAM packaging.
@@ -28,7 +26,6 @@ See below for inputs, outputs, and examples.
 
 ### Outputs
 
-- `artifact-name`: The name of the artifact stored.
 - `sam-artifact-bucket`: The S3 bucket where the SAM artifact was uploaded.
 - `sam-artifact-bucket-prefix`: The S3 prefix where the SAM artifact was uploaded.
 
@@ -99,38 +96,6 @@ jobs:
         uses: ServerlessOpsIO/gha-store-artifacts@v1
         with:
           use_aws_sam: true
-
-```
-
-#### Artifact naming
-Both [ServerlessOpsIO/gha-setup-workspace](https://github.com/ServerlessOpsIO/gha-setup-workspace) and [ServerlessOpsIO/gha-store-artifacts](https://github.com/ServerlessOpsIO/gha-store-artifacts) use the same [utility action](https://github.com/ServerlessOpsIO/gha-artifact-name) to set an artifact name if `artifact_name_override` is not set. If your workflow sets _artifact_name_override_ for `ServerlessOpsIO/gha-setup-workspace` be sure to use that actions _artifact_name_ output to set _artifact_name_override_ for `ServerlessOpsIO/gha-store-artifacts`.
-
-See the example below:
-
-```yaml
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup job workspace
-        uses: ServerlessOpsIO/gha-setup-workspace@v1
-      - name: Store Artifacts
-        uses: ServerlessOpsIO/gha-store-artifacts@v1
-        with:
-          artifact_name_override: 'MyArtifactName'
-    outputs:
-      artifact-name: ${{ steps.setup-workspace.outputs.artifact-name }}
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    steps:
-      - name: Setup job workspace
-        uses: ServerlessOpsIO/gha-setup-workspace@v1
-        with:
-          checkout_artifact: true
-          artifact_name_override: ${{ needs.build.outputs.artifact-name }}
 
 ```
 
