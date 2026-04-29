@@ -20,6 +20,8 @@ See below for inputs, outputs, and examples.
 - `artifact_retention_days` (optional): Number of days to retain artifacts..
 - `use_aws_sam` (optional): Boolean to determine if SAM artifact should be uploaded.
 - `aws_account_region` (optional): AWS region to use for SAM packaging.
+- `template_file` (optional): Path to SAM template file.
+- `packaged_template_file` (optional): Path to packaged SAM template file.
 - `sam_s3_bucket` (optional): S3 bucket for SAM deployment.
 - `sam_s3_prefix` (optional): S3 prefix for SAM deployment.
 
