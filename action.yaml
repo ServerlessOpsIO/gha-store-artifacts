@@ -13,6 +13,10 @@ inputs:
     description: Number of days to retain artifacts
     required: false
     default: "14"
+  template_file:
+    description: Path to SAM template file
+    required: false
+    default: template.yaml
   packaged_template_file:
     description: Path to packaged SAM template file
     required: false
@@ -34,7 +38,8 @@ runs:
       uses: ServerlessOpsIO/gha-package-aws-sam@v1
       with:
         aws_account_region: ${{ inputs.aws_account_region }}
-        packaged_template_file: packaged-template.yaml
+        template_file: ${{ inputs.template_file }}
+        packaged_template_file: ${{ inputs.packaged_template_file }}
         sam_s3_bucket: ${{ inputs.sam_s3_bucket }}
         sam_s3_prefix: ${{ inputs.sam_s3_prefix }}
 
