@@ -46,12 +46,12 @@ jobs:
     steps:
       - name: Setup job workspace
         id: setup-workspace
-        uses: ServerlessOpsIO/gha-setup-workspace@v1
+        uses: ServerlessOpsIO/gha-setup-workspace@v2
 
       # Do job work here
 
       - name: Store Artifacts
-        uses: ServerlessOpsIO/gha-store-artifacts@v1
+        uses: ServerlessOpsIO/gha-store-artifacts@v2
 ```
 
 #### w/ AWS SAM
@@ -71,7 +71,7 @@ jobs:
     steps:
       - name: Setup job workspace
         id: setup-workspace
-        uses: ServerlessOpsIO/gha-setup-workspace@v1
+        uses: ServerlessOpsIO/gha-setup-workspace@v2
 
 
       # Do job work here
@@ -94,7 +94,7 @@ jobs:
           gha_deploy_role_name: ${{ secrets.GHA_DEPLOY_ROLE_NAME }}
 
       - name: Store Artifacts
-        uses: ServerlessOpsIO/gha-store-artifacts@v1
+        uses: ServerlessOpsIO/gha-store-artifacts@v2
         with:
           use_aws_sam: true
 
