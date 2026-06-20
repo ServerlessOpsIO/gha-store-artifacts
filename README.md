@@ -4,7 +4,7 @@ Store job artifacts in GitHub.
 
 This GitHub Action allows you to store artifacts generated during your workflow. It additionally supports packaging and storing AWS SAM artifacts for serverless applications.
 
-For more information on what happens when `use_aws_sam` is true see [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-deploy-aws-sam).
+For more information on what happens when `use_aws_sam` is true see [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-package-aws-sam).
 
 _**NOTE: This workflow is opinionated and meets the needs of its author. It is provided publicly as a reference for others to use and modify as needed.**_
 
@@ -20,7 +20,7 @@ See below for inputs, outputs, and examples.
 - `artifact_retention_days` (optional): Number of days to retain artifacts..
 - `use_aws_sam` (optional): Boolean to determine if SAM artifact should be uploaded.
 - `aws_account_region` (optional): AWS region to use for SAM packaging.
-- `template_file` (optional): Path to SAM template file.
+- `template_file` (optional): Path to SAM template file. This value is passed directly to [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-package-aws-sam) and is only used if `use_aws_sam` is true. This should not need changing and only set if you understand how the value is used by [ServerlessOpsIO/gha-package-aws-sam](https://github.com/ServerlessOpsIO/gha-package-aws-sam/blob/main/README.md#inputs)
 - `packaged_template_file` (optional): Path to packaged SAM template file.
 - `sam_s3_bucket` (optional): S3 bucket for SAM deployment.
 - `sam_s3_prefix` (optional): S3 prefix for SAM deployment.
