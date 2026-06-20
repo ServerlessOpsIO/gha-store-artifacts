@@ -16,6 +16,7 @@ inputs:
   template_file:
     description: Path to SAM template file
     required: false
+    default: .aws-sam/build/template.yaml
   packaged_template_file:
     description: Path to packaged SAM template file
     required: false
