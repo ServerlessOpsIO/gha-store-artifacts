@@ -16,7 +16,6 @@ inputs:
   template_file:
     description: Path to SAM template file
     required: false
-    default: template.yaml
   packaged_template_file:
     description: Path to packaged SAM template file
     required: false
